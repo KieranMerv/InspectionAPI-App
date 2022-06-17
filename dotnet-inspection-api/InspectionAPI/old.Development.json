@@ -1,5 +1,6 @@
 {
   "ConnectionStrings": {
+    "AltConnection": "server=localhost\\sqlexpress;database=inspectionapidb;trusted_connection=true",
     "DefaultConnection": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"
   },
   "AppHost": "http://localhost:4200",

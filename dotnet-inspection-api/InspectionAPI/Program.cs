@@ -1,16 +1,20 @@
 using InspectionAPI.Data;
+using InspectionAPI.DbInitializer;
 using Microsoft.EntityFrameworkCore;
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
+// var appHost = builder.Configuration["AppHost"];
+
 // Add services to the container.
 builder.Services.AddDbContext<DataContext>(options => 
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddCors(options => 
+
+builder.Services.AddCors(options =>
 {
     var appHost = builder.Configuration["AppHost"];
     options.AddPolicy(name: myAllowSpecificOrigins, builder =>
@@ -20,8 +24,10 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader();
     });
 });
+
+// builder.Services.AddCors();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -38,8 +44,21 @@ app.UseHttpsRedirection();
 
 app.UseCors(myAllowSpecificOrigins);
 
+// app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins(appHost));
+
+SeedDataBase();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+void SeedDataBase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initialize();
+    }
+}

@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  inspectionAPIUrl: "https://InspectionAPI.somee.com/api"
 };
